@@ -1,6 +1,7 @@
 @extends('layout.template')
 
 @section('content')
+<h2>Data Tiket</h2>
 <form action="{{ url('mahasiswa/'.$model->id) }}" method="POST">
   @csrf
   <input type="hidden" name="_method" value="PATCH">

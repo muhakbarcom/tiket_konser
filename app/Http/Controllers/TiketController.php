@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\tiket;
 use App\Http\Requests\StoretiketRequest;
 use App\Http\Requests\UpdatetiketRequest;
-use GuzzleHttp\Psr7\Request;
+use App\Models\konser;
+// use GuzzleHttp\Psr7\Request;
+use Illuminate\Http\Request;
 
 class TiketController extends Controller
 {
@@ -18,6 +20,13 @@ class TiketController extends Controller
     {
         $data = Tiket::all();
         return view('tiket.list', compact('data'));
+    }
+
+    // pesan
+    public function pesan($id_konser)
+    {
+        $data_konser = konser::get_by_id($id_konser);
+        return view('tiket.create', compact('data_konser'));
     }
 
     /**
@@ -44,11 +53,36 @@ class TiketController extends Controller
         $model->konser_id = $request->konser_id;
         $model->alamat = $request->alamat;
         $model->nomor_hp = $request->nomor_hp;
-        $model->tiket_id = $request->tiket_id;
-        $model->tanggal = $request->tanggal;
+        $model->tiket_id = substr(md5(microtime()), rand(0, 26), 10);
+        $model->tanggal = date('Y-m-d');
         $model->save();
 
-        return redirect('/tiket');
+        $insertedId = $model->id;
+
+        return redirect('/tiket/tiket_anda/' . $insertedId);
+    }
+
+    public function tiket_anda($id_tiket)
+    {
+        $tiket = Tiket::find($id_tiket);
+        $konser = Konser::find($tiket->konser_id);
+        return view('tiket.detail', compact(['tiket', 'konser']));
+    }
+
+    public function check_in()
+    {
+        return view('tiket.check_in');
+    }
+
+    public function check_in_act(Request $request)
+    {
+        $tiket = Tiket::where('tiket_id', $request->nomor_tiket)->first();
+
+        $model = Tiket::find($tiket->id);
+        $model->is_check_in = 1;
+        $model->save();
+
+        return redirect('/tiket/check_in')->with('success', 'Tiket berhasil checkin');
     }
 
     /**

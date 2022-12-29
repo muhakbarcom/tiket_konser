@@ -30,7 +30,7 @@
               <a class="nav-link" href="<?= url('tiket'); ?>">Data Tiket</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="<?= url('logout'); ?>">Logout</a>
+              <a class="nav-link" href="<?= url('tiket/check_in'); ?>">check in</a>
             </li>
           </ul>
         </div>
